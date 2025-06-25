@@ -10,114 +10,86 @@ const Home = () => {
 	const [newTask, setNewTask] = useState("")
 	const [tasks, setTasks] = useState([])
 
-
 	//Funciones
-
 	function addTask(event) {
 
 		if (event.key === "Enter") {
 			//agregar tarea a la lista de tareas
-			setTasks(tasks.concat(newTask));
-			setNewTask("");
-			getTasks()
-		}
+			/* setTasks(tasks.concat(newTask)); */
 
-		/* fetch('https://playground.4geeks.com/todo/todos/pedro-scc', {
-			method: "POST",
-			body: JSON.stringify({
-				"label": newTask,
-				"is_done": false
-			}),
-			headers: {
-				"Content-Type": "application/json"
-			}
-		})
-			.then((response) => {
-				console.log(response);
-				if (response.status === 201) {
-					getTasks()
+			fetch('https://playground.4geeks.com/todo/todos/pedro-sc', {
+				method: "POST",
+				body: JSON.stringify({
+					"label": newTask,
+					"is_done": false
+				}),
+				headers: {
+					"Content-Type": "application/json"
 				}
-
-				return response.json()
 			})
-			.then((data) => console.log(data))
-			.catch((error) => console.log(error)) */
+				.then((response) => {
+					console.log(response);
+					if (response.status === 201) {
+						getTasks();
+						setNewTask("");
+					}
+
+					return response.json()
+				})
+				.then((data) => console.log(data))
+				.catch((error) => console.log(error))
+		}
 	}
-	//event.preventDefault()
 
+	function removeTask(id) {
 
+		fetch('https://playground.4geeks.com/todo/todos/' + id, { method: "DELETE" })
 
-	function removeTask(index) {
-		/* alert("Funciona"+id) */
-		/* setTasks(tasks.filter((_, index) => index !== id)) */
-
-
-		/* getTasks() */
-
-		fetch('https://playground.4geeks.com/todo/todos/' + tasks[index].id, { method: "DELETE" })
 			.then((response) => {
-				return response.json()
+				if (response.ok) {
+					getTasks();
+				}
 			})
-			/* .then((data) => console.log(data.todos)) */
 			.then((data) => setTasks(data.todos))
 			.catch((error) => console.log(error))
-
 	}
 
 	function getTasks() {
 
-		/* console.log("Pidiendo info"); */
-
-		fetch('https://playground.4geeks.com/todo/users/pedro-scc', { method: "GET" })
+		fetch('https://playground.4geeks.com/todo/users/pedro-sc', { method: "GET" })
 			.then((response) => {
 
 				return response.json()
 			})
-			/* .then((data) => console.log(data)) */
 			.then((data) => setTasks(data.todos))
-
 			.catch((error) => console.log(error))
 	}
 
-
-
-
 	function createUser() {
 
-		fetch('https://playground.4geeks.com/todo/users/pedro-scc', { method: "POST" })
+		fetch('https://playground.4geeks.com/todo/users/pedro-sc', { method: "POST" })
 			.then((response) => {
-
 				if (response.status === 400) {
 					getTasks();
 				}
-
 				return response.json()
 			})
 			.then((data) => console.log(data))
 			.catch((error) => console.log(error))
 	}
 
-
-
-
-	// Llamando a funciones
 	useEffect(() => {
-		//codigo que queremos que se ejecute cuando se cargue el componente
-
-		//createUser()
-		getTasks()
+		createUser()
 	}, [])
 
 
 	return (
 		<div className="text-center">
-			{/* Titulo todos */}
-			<h3 className="text-center mt-5 text-dark">todos</h3>
 
-			{/* contenedor central */}
+			<h3 className="text-center mt-5 text-dark">pedro-sc tareas</h3>
+
 			<div className="container">
 
-				{/* Input */}
 				<div className="row">
 					<div className="col-3"></div>
 					<input className="col-6"
@@ -129,36 +101,26 @@ const Home = () => {
 					<div className="col-3"></div>
 				</div>
 
-				{/* Lista */}
-
 				<div className="row">
-					<div className="col-3">
-						{/* <button onClick={createUser}>Crear usuario</button> */}
-					</div>
+					<div className="col-3"></div>
 					<ul className="col-6 list-group">
-						{/* Añadir que al hacer hover sobre el li, aparezca el botón de "eliminar" */}
 
-						{/* {tasks.map((item) =>
-							<li>{item.label}</li>)}
- 						*/}
-						{tasks.map((tasks, index) =>
+						{tasks.map((task, index) =>
 							<li key={index} className="list-group-item d-flex align-items-center border border-2 py-1 my-1">
-								<span>{tasks.label}</span>
+								<span>{task.label}</span>
 
 								<div className="ms-auto d-flex gap-2">
-									<button className="btn btn-sm btn-danger" onClick={() => removeTask(index)}>X</button>
+									<button className="btn btn-sm btn-danger" onClick={() => removeTask(task.id)}>X</button>
 								</div>
 
 							</li>
 						)}
 
-					</ul></div>
-				<div className="col-3"></div>
+					</ul>
+					<div className="col-3"></div>
+				</div>
 
 
-
-
-				{/* Contador de elementos en la lista */}
 				<p>
 					{`${tasks.length} items left`}
 				</p>
